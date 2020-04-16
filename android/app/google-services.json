@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "24079450753",
+    "firebase_url": "https://college-information-portal.firebaseio.com",
+    "project_id": "college-information-portal",
+    "storage_bucket": "college-information-portal.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:24079450753:android:bbc294f4697385dd0d8380",
+        "android_client_info": {
+          "package_name": "com.example.college_main"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "24079450753-idm876hv8kcg8nmc01npgcerj02qmclm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.college_main",
+            "certificate_hash": "5105b31f63de9fbeba69b1a65f44e63cfec89c3a"
+          }
+        },
+        {
+          "client_id": "24079450753-d1ikvnjc9a33o2832onrk6khs6n67kcd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQSZuizT00eOfSpbyeBZgmYT4qVPHDc78"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "24079450753-d1ikvnjc9a33o2832onrk6khs6n67kcd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
