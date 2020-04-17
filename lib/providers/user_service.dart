@@ -1,34 +1,47 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:college_main/models/admin.dart';
 import 'package:college_main/models/auth.dart';
+import 'package:college_main/models/student.dart';
+import 'package:college_main/models/teacher.dart';
 import 'package:college_main/models/user.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class UserService with ChangeNotifier {
   final Firestore _db = Firestore.instance;
-  Auth auth;
+  Auth _auth;
   User user;
 
-  UserService({@required this.auth});
+  UserService();
 
-  void update(Auth auth) {
-    print("LOL");
-    print(auth);
+  void initialize({@required Auth auth}) async {
+    if (auth == null) {
+      return null;
+    }
+    if (_auth == null) {
+      _auth = auth;
+      String collection = _auth.role == 'admin' ? 'admins' : 'users';
+      user = await _db
+          .collection(collection)
+          .document(_auth.uid)
+          .get()
+          .then((snapshot) => _getUserFromDocument(snapshot.data))
+          .catchError((error) => print(error));
+      print(user);
+    }
   }
 
-//  String _role;
+  User getUser() {
+    return user;
+  }
 
-//  Future<User> _userFromFirebase(FirebaseUser firebaseUser) async {
-//    if (firebaseUser == null) {
-//      return null;
-//    }
-//    final lol = await firebaseUser.getIdToken();
-//    print(lol);
-//    return Admin(
-//      number: "lol",
-//      name: "lol",
-//      email: "lol",
-//      uid: "lol",
-//    );
-//  }
-
+  User _getUserFromDocument(Map<String, dynamic> data) {
+    if (_auth.role == 'admin') {
+      return new Admin.fromMap(data);
+    } else if (_auth.role == 'teacher') {
+      return new Teacher.fromMap(data);
+    } else if (_auth.role == 'student') {
+      return new Student.fromMap(data);
+    }
+    return null;
+  }
 }

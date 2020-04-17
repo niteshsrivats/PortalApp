@@ -1,11 +1,11 @@
 import 'package:college_main/pages/login.dart';
-import 'package:college_main/test.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'providers/auth_service.dart';
 import 'providers/user_service.dart';
+import 'test.dart';
 
 void main() {
   runApp(new App());
@@ -27,6 +27,7 @@ class App extends StatelessWidget {
                 if (snapshot.data == null) {
                   child = LoginScreen();
                 } else {
+//                  child = LoginScreen();
                   child = Test();
                 }
               } else {
@@ -37,31 +38,21 @@ class App extends StatelessWidget {
               return MultiProvider(
                 providers: [
                   ChangeNotifierProxyProvider<AuthService, UserService>(
-                    create: (BuildContext context) => UserService(auth: _authService.auth),
-//                        lazy: false,
+                    create: (BuildContext context) => UserService(),
                     update: (BuildContext context, AuthService authService, previous) =>
-                        previous..update(authService.auth),
+                        previous..initialize(auth: authService.auth),
+                    lazy: false,
                   ),
                 ],
                 child: MaterialApp(
-                    title: 'Flutter Demo',
-                    theme: ThemeData(
-                      primarySwatch: MaterialColor(0xFFff9800, const <int, Color>{
-                        50: const Color(0xFFfff3e0),
-                        100: const Color(0xFFffe0b2),
-                        200: const Color(0xFFffcc80),
-                        300: const Color(0xFFffb74d),
-                        400: const Color(0xFFffa726),
-                        500: const Color(0xFFff9800),
-                        600: const Color(0xFFfb8c00),
-                        700: const Color(0xFFf57c00),
-                        800: const Color(0xFFef6c00),
-                        900: const Color(0xFFe65100),
-                      }),
-                      primaryColor: Color(0xFFff9800),
-                      accentColor: Color(0xFF4fc3f7),
-                    ),
-                    home: child),
+                  title: 'Flutter Demo',
+                  theme: ThemeData(
+                    primarySwatch: Colors.orange,
+                    primaryColor: Colors.orange,
+                    accentColor: Color(0xFF4fc3f7),
+                  ),
+                  home: child,
+                ),
               );
             },
           );

@@ -1,4 +1,4 @@
-package com.example.college_main
+package com.college.portal
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity

@@ -1,11 +1,15 @@
-import 'package:college_main/providers/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import 'providers/auth_service.dart';
+import 'providers/user_service.dart';
 
 class Test extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     AuthService authService = Provider.of<AuthService>(context);
+    UserService userService = Provider.of<UserService>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Welcome to Flutter'),

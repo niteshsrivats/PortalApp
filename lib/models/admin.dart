@@ -5,11 +5,16 @@ class Admin extends User {
 
   Admin({uid, name, email, number}) : super(uid, name, email, number);
 
-  factory Admin.fromMap(Map data) {
+  factory Admin.fromMap(Map<String, dynamic> data) {
     return Admin(
       uid: data['documentId'],
       name: data['name'],
       email: data['email'],
     );
+  }
+
+  @override
+  String toString() {
+    return 'Admin{type: $type, ${super.toString()}}';
   }
 }

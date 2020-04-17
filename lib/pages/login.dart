@@ -7,6 +7,7 @@ class LoginScreen extends StatefulWidget {
   _LoginScreenState createState() => _LoginScreenState();
 }
 
+// TODO forgot password
 class _LoginScreenState extends State<LoginScreen> {
   String _email, _password;
   bool _loading = false;
@@ -61,67 +62,67 @@ class _LoginScreenState extends State<LoginScreen> {
     final AuthService authService = Provider.of<AuthService>(context, listen: false);
     return Scaffold(
       key: _scaffoldKey,
-      body: Padding(
-        padding: EdgeInsets.fromLTRB(45, 45.0, 45, 0.0),
-        child: Form(
-          key: _formKey,
-          child: _loading
-              ? Center(
-                  child: CircularProgressIndicator(),
-                )
-              : ListView(
-                  shrinkWrap: true,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 32, 0, 0),
-                      child: TextFormField(
-                        autofocus: false,
-                        maxLines: 1,
-                        keyboardType: TextInputType.emailAddress,
-                        decoration: new InputDecoration(
-                          labelText: 'Email',
-                          icon: new Icon(
-                            Icons.mail_outline,
-//                    color: ,
+      extendBody: true,
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
+        child: Container(
+          height: double.infinity,
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(45, 45.0, 45, 0.0),
+            child: Form(
+              key: _formKey,
+              child: _loading
+                  ? Center(child: CircularProgressIndicator())
+                  : ListView(
+                      shrinkWrap: true,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 32, 0, 0),
+                          child: TextFormField(
+                            autofocus: false,
+                            maxLines: 1,
+                            keyboardType: TextInputType.emailAddress,
+                            decoration: new InputDecoration(
+                              labelText: 'Email',
+                              icon: new Icon(Icons.mail_outline),
+                            ),
+                            validator: _validateEmail,
+                            onSaved: (value) => setState(() => _email = value),
                           ),
                         ),
-                        validator: _validateEmail,
-                        onSaved: (value) => setState(() => _email = value),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 32, 0, 0),
-                      child: TextFormField(
-                        autofocus: false,
-                        obscureText: true,
-                        maxLines: 1,
-                        decoration: new InputDecoration(
-                          labelText: 'Password',
-                          icon: new Icon(
-                            Icons.lock_outline,
-//                    color: ,
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 32, 0, 0),
+                          child: TextFormField(
+                            autofocus: false,
+                            obscureText: true,
+                            maxLines: 1,
+                            decoration: new InputDecoration(
+                              labelText: 'Password',
+                              icon: new Icon(Icons.lock_outline),
+                            ),
+                            validator: _validatePassword,
+                            onSaved: (value) => setState(() => _password = value),
                           ),
                         ),
-                        validator: _validatePassword,
-                        onSaved: (value) => setState(() => _password = value),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(40, 32, 0, 0),
-                      child: SizedBox(
-                        height: 40.0,
-                        child: RaisedButton(
-                          elevation: 5.0,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
-                          color: Theme.of(context).accentColor,
-                          child:
-                              Text('Login', style: TextStyle(fontSize: 20.0, color: Colors.white)),
-                          onPressed: () => _submit(authService),
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(40, 32, 0, 0),
+                          child: SizedBox(
+                            height: 40.0,
+                            child: RaisedButton(
+                              elevation: 5.0,
+                              shape:
+                                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
+                              color: Theme.of(context).accentColor,
+                              child: Text('Login',
+                                  style: TextStyle(fontSize: 20.0, color: Colors.white)),
+                              onPressed: () => _submit(authService),
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
-                ),
+            ),
+          ),
         ),
       ),
     );

@@ -9,6 +9,6 @@ class Auth {
 
   @override
   String toString() {
-    return 'Auth{uid: $uid, token: $token, role: $role}';
+    return 'Auth{uid: $uid, role: $role}';
   }
 }

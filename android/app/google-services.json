@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:24079450753:android:bbc294f4697385dd0d8380",
         "android_client_info": {
-          "package_name": "com.example.college_main"
+          "package_name": "com.college.portal"
         }
       },
       "oauth_client": [
@@ -18,7 +18,7 @@
           "client_id": "24079450753-idm876hv8kcg8nmc01npgcerj02qmclm.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.college_main",
+            "package_name": "com.college.portal",
             "certificate_hash": "5105b31f63de9fbeba69b1a65f44e63cfec89c3a"
           }
         },

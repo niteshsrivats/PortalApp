@@ -22,7 +22,7 @@ class Student extends User {
     @required this.sections,
   }) : super(uid, name, email, phoneNumber);
 
-  factory Student.fromMap(Map data) {
+  factory Student.fromMap(Map<String, dynamic> data) {
     return Student(
         uid: data['documentId'],
         name: data['name'],
@@ -33,5 +33,10 @@ class Student extends User {
         department: data['department'],
         semesters: data['semesters'],
         sections: data['sections']);
+  }
+
+  @override
+  String toString() {
+    return 'Student{id: $id, year: $year, department: $department, semesters: $semesters, sections: $sections, type: $type}';
   }
 }
