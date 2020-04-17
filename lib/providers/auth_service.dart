@@ -16,7 +16,6 @@ class AuthService with ChangeNotifier {
     } else if (idTokenResult.claims.containsKey('student')) {
       role = 'student';
     }
-    print("PROCESS TOKEN");
     this.auth = new Auth(uid: uid, token: idTokenResult.token, role: role);
   }
 
