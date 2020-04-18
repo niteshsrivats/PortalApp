@@ -64,7 +64,7 @@ class _LoginScreenState extends State<LoginScreen> {
       key: _scaffoldKey,
       extendBody: true,
       body: GestureDetector(
-        onTap: () => FocusScope.of(context).requestFocus(new FocusNode()),
+        onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
         child: Container(
           height: double.infinity,
           child: Padding(
@@ -82,9 +82,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             autofocus: false,
                             maxLines: 1,
                             keyboardType: TextInputType.emailAddress,
-                            decoration: new InputDecoration(
+                            decoration: InputDecoration(
                               labelText: 'Email',
-                              icon: new Icon(Icons.mail_outline),
+                              icon: const Icon(Icons.mail_outline),
                             ),
                             validator: _validateEmail,
                             onSaved: (value) => setState(() => _email = value),

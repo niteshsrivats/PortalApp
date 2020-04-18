@@ -1,9 +1,13 @@
+import 'package:college_main/providers/post_service.dart';
 import 'package:college_main/widgets/navbar.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class NewsfeedScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final PostService _postService = Provider.of<PostService>(context, listen: false);
+    _postService.getPosts();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,

@@ -1,5 +1,9 @@
 import 'package:college_main/pages/login_screen.dart';
+import 'package:college_main/pages/new_post_screen.dart';
 import 'package:college_main/pages/newsfeed_screen.dart';
+import 'package:college_main/pages/profile_screen.dart';
+import 'package:college_main/providers/department_service.dart';
+import 'package:college_main/providers/post_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -42,32 +46,31 @@ class App extends StatelessWidget {
                         previous..initialize(auth: authService.auth),
                     lazy: false,
                   ),
+                  ChangeNotifierProxyProvider<AuthService, DepartmentService>(
+                    create: (BuildContext context) => DepartmentService(),
+                    update: (BuildContext context, AuthService authService, previous) =>
+                        previous..initialize(auth: authService.auth),
+                    lazy: false,
+                  ),
+                  ChangeNotifierProxyProvider<AuthService, PostService>(
+                    create: (BuildContext context) => PostService(),
+                    update: (BuildContext context, AuthService authService, previous) =>
+                        previous..initialize(auth: authService.auth),
+                    lazy: false,
+                  ),
                 ],
                 child: MaterialApp(
-                  title: 'Flutter Demo',
+                  title: 'College Portal',
                   theme: ThemeData(
-                    primarySwatch: MaterialColor(
-                      0xFF4fc3f7,
-                      const <int, Color>{
-                        50: const Color(0xFFdcdce8),
-                        100: const Color(0xFFcbcad8),
-                        200: const Color(0xFFbab9cc),
-                        300: const Color(0xFFa9a8bf),
-                        400: const Color(0xFF53517f),
-                        500: const Color(0xFF4fc3f7),
-                        600: const Color(0xFF312f54),
-                        700: const Color(0xFF24233f),
-                        800: const Color(0xFF1e1e35),
-                        900: const Color(0xFF06060b),
-                      },
-                    ),
-//                    primaryColor: Colors.white,
-                    accentColor: Colors.orange,
+                    primarySwatch: Colors.lightBlue,
+                    accentColor: Colors.lightBlue,
                     scaffoldBackgroundColor: Color(0xFFfafafa),
 //                    scaffoldBackgroundColor: Color(0xFFf0f0f0),
                   ),
                   home: child,
                   routes: {
+                    '/newpost': (context) => NewPostScreen(),
+                    '/profile': (context) => ProfilePage(),
 //                    '/': (context) => NewsfeedScreen(),
                   },
                 ),
