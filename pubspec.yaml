@@ -25,7 +25,9 @@ dependencies:
   firebase_auth: ^0.16.0
 #  firebase_analytics: ^5.0.11
   cloud_firestore: ^0.13.5
-
+  firebase_storage: ^3.0.4
+  getflutter: ^1.0.11
+  image_picker: 0.6.0+17
 
 
 # For information on the generic Dart part of this file, see the
