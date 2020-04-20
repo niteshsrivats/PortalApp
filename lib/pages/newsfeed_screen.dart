@@ -1,13 +1,33 @@
+import 'package:college_main/providers/auth_service.dart';
+import 'package:college_main/providers/defaults_service.dart';
 import 'package:college_main/providers/post_service.dart';
+import 'package:college_main/providers/user_service.dart';
 import 'package:college_main/widgets/navbar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class NewsfeedScreen extends StatelessWidget {
+class NewsfeedScreen extends StatefulWidget {
+  @override
+  _NewsfeedScreenState createState() => _NewsfeedScreenState();
+}
+
+class _NewsfeedScreenState extends State<NewsfeedScreen> {
+  PostService _postService;
+  DefaultsService _defaultsService;
+  UserService _userService;
+  AuthService _authService;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _postService = Provider.of<PostService>(context, listen: false);
+    _defaultsService = Provider.of<DefaultsService>(context, listen: false);
+    _userService = Provider.of<UserService>(context, listen: false);
+    _authService = Provider.of<AuthService>(context, listen: false);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final PostService _postService = Provider.of<PostService>(context, listen: false);
-    _postService.getPosts();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -16,7 +36,7 @@ class NewsfeedScreen extends StatelessWidget {
           icon: const Icon(Icons.settings),
           color: Theme.of(context).primaryColor,
           padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
-          onPressed: () => print("Settings"),
+          onPressed: () => _authService.signOut(),
         ),
         title: Icon(
           Icons.language,

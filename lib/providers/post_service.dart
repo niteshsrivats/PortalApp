@@ -1,32 +1,27 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:college_main/models/auth.dart';
 import 'package:college_main/models/post.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class PostService with ChangeNotifier {
   final Firestore _db = Firestore.instance;
-  Auth _auth;
+  final FirebaseUser _user;
+  Map<dynamic, dynamic> _claims;
   List<Post> posts = [];
 
-  PostService();
-
-  void initialize({@required Auth auth}) async {
-    if (auth != null && _auth == null) {
-      _auth = auth;
-    }
+  PostService(this._user) {
+    init();
   }
 
-  void post() async {
-    Map<String, dynamic> post = new Post(
-      author: 'Nitesh Srivats',
-      title: '6A CSE',
-      content:
-          'Lorem ipsum dolor sit amet, consectetur adipisi adipisicing elit. Asperiores aut dignissimos dolorem dolorum ducimus fuga in, numquam odio pariatur possimus quasi sint sunt ut? Placeat.',
-      accessSpecifiers: [],
-      totalComments: 78,
-      totalLikes: 223,
-    ).toMap();
-    var result = await _db.collection('posts').add(post);
+  void init() async {
+    _claims = await _user.getIdToken().then((result) => result.claims).catchError((error) {
+      print(error);
+      return null;
+    });
+  }
+
+  void post({Map<String, dynamic> data}) async {
+    var result = await _db.collection('posts').add(data);
     print(result);
   }
 

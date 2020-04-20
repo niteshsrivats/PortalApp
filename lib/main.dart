@@ -1,8 +1,7 @@
 import 'package:college_main/pages/login_screen.dart';
 import 'package:college_main/pages/new_post_screen.dart';
 import 'package:college_main/pages/newsfeed_screen.dart';
-import 'package:college_main/pages/profile_screen.dart';
-import 'package:college_main/providers/department_service.dart';
+import 'package:college_main/providers/defaults_service.dart';
 import 'package:college_main/providers/post_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +15,9 @@ void main() {
 }
 
 class App extends StatelessWidget {
+  final Key homeKey = UniqueKey();
+  final Key loadingKey = UniqueKey();
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<AuthService>(
@@ -26,55 +28,28 @@ class App extends StatelessWidget {
           return StreamBuilder<FirebaseUser>(
             stream: _authService.onAuthStateChanged,
             builder: (BuildContext context, AsyncSnapshot<FirebaseUser> snapshot) {
-              Widget child;
               if (snapshot.connectionState == ConnectionState.active) {
                 if (snapshot.data == null) {
-                  child = LoginScreen();
+                  return MaterialAppWithRoutes(routes: {'/': (context) => LoginScreen()});
                 } else {
-                  child = NewsfeedScreen();
+                  return Home(
+                    key: homeKey,
+                    user: snapshot.data,
+                    routes: {
+                      '/': (context) => NewsfeedScreen(),
+                      '/post': (context) => NewPostScreen(),
+                      '/profile': (context) => NewPostScreen(),
+                    },
+                  );
                 }
               } else {
-                child = Scaffold(
-                  body: Center(child: CircularProgressIndicator()),
+                return MaterialAppWithRoutes(
+                  key: loadingKey,
+                  routes: {
+                    '/': (context) => Scaffold(body: Center(child: CircularProgressIndicator()))
+                  },
                 );
               }
-              return MultiProvider(
-                providers: [
-                  ChangeNotifierProxyProvider<AuthService, UserService>(
-                    create: (BuildContext context) => UserService(),
-                    update: (BuildContext context, AuthService authService, previous) =>
-                        previous..initialize(auth: authService.auth),
-                    lazy: false,
-                  ),
-                  ChangeNotifierProxyProvider<AuthService, DepartmentService>(
-                    create: (BuildContext context) => DepartmentService(),
-                    update: (BuildContext context, AuthService authService, previous) =>
-                        previous..initialize(auth: authService.auth),
-                    lazy: false,
-                  ),
-                  ChangeNotifierProxyProvider<AuthService, PostService>(
-                    create: (BuildContext context) => PostService(),
-                    update: (BuildContext context, AuthService authService, previous) =>
-                        previous..initialize(auth: authService.auth),
-                    lazy: false,
-                  ),
-                ],
-                child: MaterialApp(
-                  title: 'College Portal',
-                  theme: ThemeData(
-                    primarySwatch: Colors.lightBlue,
-                    accentColor: Colors.lightBlue,
-                    scaffoldBackgroundColor: Color(0xFFfafafa),
-//                    scaffoldBackgroundColor: Color(0xFFf0f0f0),
-                  ),
-                  home: child,
-                  routes: {
-                    '/newpost': (context) => NewPostScreen(),
-                    '/profile': (context) => ProfilePage(),
-//                    '/': (context) => NewsfeedScreen(),
-                  },
-                ),
-              );
             },
           );
         },
@@ -83,17 +58,47 @@ class App extends StatelessWidget {
   }
 }
 
-//  Widget build(BuildContext context) {
-//    return MultiProvider(providers: [
-//      StreamProvider<FirebaseUser>.value(
-//          value: FirebaseAuth.instance.onAuthStateChanged)
-//    ], child:
-//    ););
+class Home extends StatelessWidget {
+  final Map<String, Widget Function(BuildContext)> routes;
+  final FirebaseUser user;
 
-//    return new MaterialApp(
-//        title: 'College Information Portal',
-//        debugShowCheckedModeBanner: false,
-//        theme: new ThemeData(
-//          primarySwatch: Colors.blue,
-//        ),
-//        home: new RootPage(auth: new Auth()));
+  const Home({Key key, this.user, this.routes}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(providers: [
+      ChangeNotifierProvider<UserService>(
+        create: (BuildContext context) => UserService(user),
+        lazy: false,
+      ),
+      ChangeNotifierProvider<DefaultsService>(
+        create: (BuildContext context) => DefaultsService(user),
+        lazy: false,
+      ),
+      ChangeNotifierProvider<PostService>(
+        create: (BuildContext context) => PostService(user),
+        lazy: false,
+      ),
+    ], child: MaterialAppWithRoutes(routes: routes));
+  }
+}
+
+class MaterialAppWithRoutes extends StatelessWidget {
+  final Map<String, Widget Function(BuildContext)> routes;
+
+  const MaterialAppWithRoutes({Key key, this.routes}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'College Portal',
+      theme: ThemeData(
+        primarySwatch: Colors.lightBlue,
+        accentColor: Colors.lightBlue,
+        scaffoldBackgroundColor: Color(0xFFfafafa),
+//                    scaffoldBackgroundColor: Color(0xFFf0f0f0),
+      ),
+      routes: routes,
+    );
+  }
+}

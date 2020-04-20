@@ -10,7 +10,7 @@ class Navbar extends StatelessWidget {
       switch (index) {
         case 0:
           if (this.index == 1) {
-            Navigator.pushNamed(context, '/newpost');
+            Navigator.pushNamed(context, '/post');
           } else {
             Navigator.pushReplacementNamed(context, '/');
           }
