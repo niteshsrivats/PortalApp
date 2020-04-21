@@ -31,6 +31,14 @@ class UserService with ChangeNotifier {
         .then((snapshot) => _getUserFromDocument(snapshot.data))
         .catchError((error) => print(error));
     print(user);
+    notifyListeners();
+  }
+
+   void setImage(String url) {
+    String collection = _claims.containsKey('admin') ? 'admins' : 'users';
+    user.image = url;
+    _db.collection(collection).document(user.uid).updateData({'image': url});
+    notifyListeners();
   }
 
   User _getUserFromDocument(Map<String, dynamic> data) {
@@ -43,10 +51,5 @@ class UserService with ChangeNotifier {
     }
     return null;
   }
-  void setImage(String url) {
-    String collection = _claims.containsKey('admin') ? 'admins' : 'users';
-    user.image = url;
-    _db.collection(collection).document(user.uid).updateData({'image': url});
-    notifyListeners();
-  }
+ 
 }

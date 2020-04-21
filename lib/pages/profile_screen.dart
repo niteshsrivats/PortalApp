@@ -9,7 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:college_main/models/user.dart';
 import 'package:college_main/models/admin.dart';
 import 'package:college_main/models/student.dart';
-import 'package:college_main/models/post.dart';
+// import 'package:college_main/models/post.dart';
 import 'package:college_main/models/teacher.dart';
 // import 'package:college_main/widgets/navbar.dart';
 

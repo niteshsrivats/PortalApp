@@ -21,7 +21,45 @@ class Filter extends StatefulWidget {
 class _FilterState extends State<Filter> {
   final Map<String, List<String>> data;
   final Map<String, List<bool>> selected;
+  Map<String, List<String>> _data;
+  Map<String, List<bool>> _selected;
   final String role, type;
+
+  _FilterState(this.data, this.selected, this.role, this.type) {
+    if (type == 'post') {
+      _data = data;
+      _selected = selected;
+    } else if (type == 'feed') {
+      _data = Map.from(data);
+      _selected = Map.from(selected);
+
+      String year = data['years'][selected['years'].indexOf(true)];
+
+      _data['semesters'].retainWhere((semester) => semester.endsWith(year));
+      _selected['semesters'] = List.generate(
+          _data['semesters'].length,
+          (int index) =>
+              selected['semesters'][data['semesters'].indexOf(_data['semesters'][index])]);
+      _data['semesters'] = _data['semesters'].map((semester) => semester[0]).toList();
+
+      if (role != 'admin') {
+        _data['sections'].retainWhere((section) => section.endsWith(year));
+        _data['sections'] = _data['sections'].map((section) => section.substring(0, 2)).toList();
+        _selected['sections'] = List.generate(
+            _data['sections'].length,
+            (int index) =>
+                _selected['semesters'][_data['semesters'].indexOf(data['sections'][index][0])]);
+        _selected['departments'][0] = true;
+      }
+
+      for (var i = 0; i < _data['semesters'].length; i++) {
+        if (int.tryParse(_data['semesters'][i]) % 2 == 1) {
+          _data['semesters'].retainWhere((semester) => int.tryParse(semester) % 2 == 1);
+          break;
+        }
+      }
+    }
+  }
 
   @override
   void initState() {
@@ -29,14 +67,15 @@ class _FilterState extends State<Filter> {
   }
 
   void publicHandleState(bool value) {
-    this.selected['semesters'] = List.generate(this.data['semesters'].length, (int index) => value);
-    this.selected['departments'] =
-        List.generate(this.data['departments'].length, (int index) => value);
-    this.selected['public'][0] = value;
+    this._selected['semesters'] =
+        List.generate(this._data['semesters'].length, (int index) => value);
+    this._selected['departments'] =
+        List.generate(this._data['departments'].length, (int index) => value);
+    this._selected['public'][0] = value;
   }
 
   void handlePublic(int index) {
-    bool public = selected['public'][0];
+    bool public = _selected['public'][0];
     if (public) {
       this.setState(() => publicHandleState(false));
     } else {
@@ -45,35 +84,39 @@ class _FilterState extends State<Filter> {
   }
 
   void handleYear(int index) {
-    this.setState(() => selected['years'][index] = !selected['years'][index]);
+    if (type == 'feed') {
+      this.setState(() {
+        _selected['years'][index] = !_selected['years'][index];
+      });
+    }
   }
 
   void handleSemester(int index) {
     if (type == 'post') {
-      if (role == 'admin' && selected['public'][0] == false) {
-        this.setState(() => selected['semesters'][index] = !selected['semesters'][index]);
+      if (role == 'admin' && _selected['public'][0] == false) {
+        this.setState(() => _selected['semesters'][index] = !_selected['semesters'][index]);
       } else if (role == 'teacher') {
         this.setState(() {
-          selected['semesters'][index] = !selected['semesters'][index];
-          this.selected['sections'] =
-              List.generate(this.data['sections'].length, (int index) => false);
+          _selected['semesters'][index] = !_selected['semesters'][index];
+          this._selected['sections'] =
+              List.generate(this._data['sections'].length, (int index) => false);
         });
       }
     }
   }
 
   void handleDepartment(int index) {
-    if (type == 'post' && role == 'admin' && selected['public'][0] == false) {
-      this.setState(() => selected['departments'][index] = !selected['departments'][index]);
+    if (type == 'post' && role == 'admin' && _selected['public'][0] == false) {
+      this.setState(() => _selected['departments'][index] = !_selected['departments'][index]);
     }
   }
 
   void handleSection(int index) {
     if (type == 'post' && role == 'teacher') {
       this.setState(() {
-        selected['sections'][index] = !selected['sections'][index];
-        this.selected['semesters'] =
-            List.generate(this.data['semesters'].length, (int index) => false);
+        _selected['sections'][index] = !_selected['sections'][index];
+        this._selected['semesters'] =
+            List.generate(this._data['semesters'].length, (int index) => false);
       });
     }
   }
@@ -82,54 +125,65 @@ class _FilterState extends State<Filter> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        data['years'] != null
+        _data['years'] != null
             ? Column(
                 children: [
                   Text("Year", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
                   SizedBox(height: 4),
-                  FilterField(data: data['years'], selected: selected['years'], onTap: handleYear),
+                  FilterField(
+                      data: _data['years'], selected: _selected['years'], onTap: handleYear),
                   SizedBox(height: 16),
                 ],
               )
             : Container(),
-        data['semesters'] != null
+        _data['semesters'] != null
             ? Column(
                 children: [
                   Text("Semesters", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
                   SizedBox(height: 4),
                   FilterField(
-                    data: data['semesters'],
-                    selected: selected['semesters'],
+                    data: _data['semesters'],
+                    selected: _selected['semesters'],
                     onTap: handleSemester,
                   ),
                   SizedBox(height: 16),
                 ],
               )
             : Container(),
-        Text(data['departments'].length == 1 ? "Department" : "Departments",
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
-        SizedBox(height: 4),
-        FilterField(
-            data: data['departments'], selected: selected['departments'], onTap: handleDepartment),
-        SizedBox(height: 16),
-        data['sections'] != null
+        _data['sections'] != null
+            ? Column(
+                children: [
+                  Text("departments", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                  SizedBox(height: 4),
+                  FilterField(
+                    data: _data['departments'],
+                    selected: _selected['departments'],
+                    onTap: handleDepartment,
+                  ),
+                  SizedBox(height: 16),
+                ],
+              )
+            : Container(),
+        _data['sections'] != null
             ? Column(
                 children: [
                   Text("Sections", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
                   SizedBox(height: 4),
                   FilterField(
-                      data: data['sections'], selected: selected['sections'], onTap: handleSection),
+                      data: _data['sections'],
+                      selected: _selected['sections'],
+                      onTap: handleSection),
                   SizedBox(height: 16),
                 ],
               )
             : Container(),
-        data['public'] != null
+        _data['public'] != null
             ? Column(
                 children: [
                   Text("Public", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
                   SizedBox(height: 4),
                   FilterField(
-                      data: data['public'], selected: selected['public'], onTap: handlePublic),
+                      data: _data['public'], selected: _selected['public'], onTap: handlePublic),
                   SizedBox(height: 16),
                 ],
               )
@@ -137,6 +191,4 @@ class _FilterState extends State<Filter> {
       ],
     );
   }
-
-  _FilterState(this.data, this.selected, this.role, this.type);
 }
