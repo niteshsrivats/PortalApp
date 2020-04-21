@@ -27,7 +27,7 @@ class _NewsfeedScreenState extends State<NewsfeedScreen> {
 
   static const bodyText = 'Lorem ipsum dolor sit amet, consectetur adipisi adipisicing elit. Asperiores aut dignissimos dolorem dolorum ducimus fuga in, numquam odio pariatur possimus quasi sint sunt ut? Placeat.';
   static const author = '\n- Adhyayan Panwar';
-  
+
   @override
   void initState() {
     _postService = Provider.of<PostService>(context, listen: false);

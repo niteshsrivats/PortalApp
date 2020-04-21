@@ -5,6 +5,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:college_main/providers/user_service.dart';
+import 'package:college_main/providers/auth_service.dart';
 import 'package:provider/provider.dart';
 import 'package:college_main/models/user.dart';
 import 'package:college_main/models/admin.dart';
@@ -22,10 +23,12 @@ class MapScreenState extends State<ProfilePage>
     with SingleTickerProviderStateMixin {
   final FocusNode myFocusNode = FocusNode();
   UserService _userService;
+  AuthService _authService;
   String main;
   void didChangeDependencies() {
     super.didChangeDependencies();
     _userService = Provider.of<UserService>(context, listen: true);
+    _authService = Provider.of<AuthService>(context, listen: false);
     _initalize();
   }
 
@@ -109,13 +112,34 @@ class MapScreenState extends State<ProfilePage>
     checkUrl();
     // TODO: implement build
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
-          title: Text(
-            "Profile Page",
-            style: TextStyle(fontSize: 18.0),
-          ),
-        ),
+            title: Text(
+              "Profile Page",
+              style: TextStyle(fontSize: 18.0),
+            ),
+            actions: <Widget>[
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 10.0),
+                child: RaisedButton(
+                  elevation: 0.0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(24.0),
+                  ),
+                  color: Colors.white,
+                  onPressed: () => _authService.signOut(),
+                  child: Text(
+                    'Logout',
+                    style: TextStyle(
+                      color: Colors.blue,
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              )
+            ]),
         backgroundColor: Colors.white,
         body: SafeArea(
           child: Center(

@@ -94,6 +94,7 @@ class MaterialAppWithRoutes extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'College Portal',
       theme: ThemeData(
         primarySwatch: Colors.lightBlue,
