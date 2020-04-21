@@ -5,7 +5,7 @@ import 'user.dart';
 class Teacher extends User {
   final String id;
   final String title;
-  final String year;
+  final List<String> years;
   final String department;
   final List<String> semesters;
   final List<String> sections;
@@ -18,7 +18,7 @@ class Teacher extends User {
     @required number,
     @required this.id,
     @required this.title,
-    @required this.year,
+    @required this.years,
     @required this.department,
     @required this.semesters,
     @required this.sections,
@@ -33,7 +33,7 @@ class Teacher extends User {
       email: data['email'],
       number: data['number'],
       id: data['id'],
-      year: data['year'],
+      years: data['years'].cast<String>(),
       department: data['department'],
       semesters: data['semesters'].cast<String>(),
       sections: data['sections'].cast<String>(),
@@ -42,6 +42,6 @@ class Teacher extends User {
 
   @override
   String toString() {
-    return 'Teacher{id: $id, year: $year, department: $department, semesters: $semesters, sections: $sections, type: $type}';
+    return 'Teacher{id: $id, years: $years, department: $department, semesters: $semesters, sections: $sections, type: $type}';
   }
 }

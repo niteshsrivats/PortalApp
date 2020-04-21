@@ -1,6 +1,6 @@
 abstract class User {
   final String uid;
-  final String image;
+  String image;
   final String name;
   final String email;
   final String number;

@@ -8,6 +8,7 @@ class DefaultsService with ChangeNotifier {
   final FirebaseUser _user;
   List<String> departments;
   List<String> semesters;
+  List<String> years;
 
   DefaultsService(this._user) {
     _init();
@@ -30,6 +31,7 @@ class DefaultsService with ChangeNotifier {
 
       departments = data['codes'].cast<String>();
       semesters = data['semesters'].cast<String>();
+      semesters = data['years'].cast<String>();
     }
   }
 }
