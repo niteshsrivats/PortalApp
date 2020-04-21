@@ -6,6 +6,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:college_main/providers/user_service.dart';
 import 'package:provider/provider.dart';
+import 'package:college_main/models/user.dart';
+import 'package:college_main/models/admin.dart';
+import 'package:college_main/models/student.dart';
+import 'package:college_main/models/post.dart';
+import 'package:college_main/models/teacher.dart';
+// import 'package:college_main/widgets/navbar.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -15,26 +21,47 @@ class ProfilePage extends StatefulWidget {
 class MapScreenState extends State<ProfilePage>
     with SingleTickerProviderStateMixin {
   final FocusNode myFocusNode = FocusNode();
+  UserService _userService;
+  String main;
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _userService = Provider.of<UserService>(context, listen: true);
+    _initalize();
+  }
 
-  final FirebaseStorage _storage = FirebaseStorage(
-      storageBucket: 'gs://college-information-portal.appspot.com/');
+  void _initalize() {
+    User user = _userService.user;
+    if (user.type == 'admin')
+      main = (user as Admin).title;
+    else if (user.type == 'student')
+      main = (user as Student).department;
+    else if (user.type == 'teacher') main = (user as Teacher).title;
+  }
 
   Future<void> _pickImage(ImageSource source, String id) async {
     File selected = await ImagePicker.pickImage(source: source);
+    final FirebaseStorage _storage = FirebaseStorage(
+        storageBucket: 'gs://college-information-portal.appspot.com/');
+
     // StorageUploadTask _uploadTask;
     String filePath = 'images/' + id + '.png';
-    _storage.ref().child(filePath).putFile(selected);
-    // _uploadTask = _storage.ref().child(filePath).putFile(selected);
-    // while (!_uploadTask.isComplete) {
-    //   if (_uploadTask.isComplete) {
-    //     print("Done!");
-    //     break;  
-    //   }
-    // }
-    // final ref = FirebaseStorage.instance.ref().child('images/' + id + '.png');
-    // final String url = await ref.getDownloadURL();
-    // print(url);
+    StorageTaskSnapshot snapshot =
+        await _storage.ref().child(filePath).putFile(selected).onComplete;
+    String url = await snapshot.ref.getDownloadURL().then((value) => value);
+    print(url);
+    _userService.setImage(url);
   }
+
+  void checkUrl() {
+    if (_userService.user.image == null)
+      _userService.user.image = 'https://via.placeholder.com/150';
+  }
+  // Future<void> _getURL(String id) async {
+  //   final ref = FirebaseStorage.instance.ref().child('images/' + id + '.png');
+  //   final String url = await ref.getDownloadURL();
+  //   print(url);
+  //   _userService.setImage(url);
+  // }
 
   void _showDialog(String id) {
     showDialog(
@@ -79,11 +106,7 @@ class MapScreenState extends State<ProfilePage>
 
   @override
   Widget build(BuildContext context) {
-    final UserService _userService =
-        Provider.of<UserService>(context, listen: false);
-    var id = _userService.user.uid;
-    var name = _userService.user.name;
-    var email = _userService.user.email;
+    checkUrl();
     // TODO: implement build
     return MaterialApp(
       home: Scaffold(
@@ -106,7 +129,7 @@ class MapScreenState extends State<ProfilePage>
                         child: GFAvatar(
                             radius: 80,
                             backgroundImage:
-                                NetworkImage('https://via.placeholder.com/150'),
+                                NetworkImage(_userService.user.image),
                             shape: GFAvatarShape.standard)),
                     Positioned(
                       top: 130,
@@ -114,7 +137,7 @@ class MapScreenState extends State<ProfilePage>
                       child: IconButton(
                         color: Colors.white,
                         icon: Icon(Icons.edit),
-                        onPressed: () => _showDialog(id),
+                        onPressed: () => _showDialog(_userService.user.uid),
                       ),
                     )
                   ],
@@ -122,7 +145,7 @@ class MapScreenState extends State<ProfilePage>
                 Padding(
                     padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
                     child: Text(
-                      name,
+                      _userService.user.name,
                       style: TextStyle(
                         fontFamily: 'SourceSansPro',
                         fontSize: 25,
@@ -148,7 +171,7 @@ class MapScreenState extends State<ProfilePage>
                         color: Colors.teal[900],
                       ),
                       title: Text(
-                        '6A CSE',
+                        main,
                         style: TextStyle(fontSize: 20.0),
                       ),
                     )),
@@ -165,7 +188,7 @@ class MapScreenState extends State<ProfilePage>
                       color: Colors.teal[900],
                     ),
                     title: Text(
-                      email,
+                      _userService.user.email,
                       style: TextStyle(
                         fontSize: 20.0,
                       ),
