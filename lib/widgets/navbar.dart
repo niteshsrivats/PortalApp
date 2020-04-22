@@ -12,17 +12,17 @@ class Navbar extends StatelessWidget {
           if (this.index == 1) {
             Navigator.pushNamed(context, '/post');
           } else {
-            Navigator.pushReplacementNamed(context, '/');
+            Navigator.pushReplacementNamed(context, '/post');
           }
           break;
         case 1:
-          Navigator.popUntil(context, ModalRoute.withName('/'));
+          Navigator.pushReplacementNamed(context, '/');
           break;
         case 2:
           if (this.index == 1) {
             Navigator.pushNamed(context, '/profile');
           } else {
-            Navigator.pushReplacementNamed(context, '/');
+            Navigator.pushReplacementNamed(context, '/profile');
           }
           break;
       }

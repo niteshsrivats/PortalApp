@@ -1,44 +1,69 @@
 import 'dart:io';
 
+import 'package:college_main/models/admin.dart';
+import 'package:college_main/models/student.dart';
+import 'package:college_main/models/teacher.dart';
+import 'package:college_main/models/user.dart';
+import 'package:college_main/providers/auth_service.dart';
 import 'package:college_main/providers/user_service.dart';
+import 'package:college_main/widgets/navbar.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:getflutter/getflutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
-class ProfilePage extends StatefulWidget {
+class ProfileScreen extends StatefulWidget {
+  final User user;
+
+  ProfileScreen({Key key, this.user}) : super(key: key);
+
   @override
-  MapScreenState createState() => MapScreenState();
+  _ProfileScreenState createState() => _ProfileScreenState(this.user);
 }
 
-class MapScreenState extends State<ProfilePage> with SingleTickerProviderStateMixin {
-  final FocusNode myFocusNode = FocusNode();
+class _ProfileScreenState extends State<ProfileScreen> {
+  User user;
+  User _user;
+  Function _signOut, _setUserImage;
+  String _title;
 
-  final FirebaseStorage _storage =
-      FirebaseStorage(storageBucket: 'gs://college-information-portal.appspot.com/');
+  _ProfileScreenState(this.user);
+
+  @override
+  void initState() {
+    super.initState();
+    _setUserImage = Provider.of<UserService>(context, listen: false).setImage;
+    _signOut = Provider.of<AuthService>(context, listen: false).signOut;
+  }
+
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _user = Provider.of<UserService>(context).user;
+    if (user == null) {
+      user = _user;
+    }
+    _setTitle();
+  }
+
+  void _setTitle() {
+    if (user.type == 'admin') {
+      _title = (user as Admin).title;
+    } else if (user.type == 'student') {
+      _title = (user as Student).department;
+    } else if (user.type == 'teacher') {
+      _title = (user as Teacher).title;
+    }
+  }
 
   Future<void> _pickImage(ImageSource source, String id) async {
     File selected = await ImagePicker.pickImage(source: source);
-    // StorageUploadTask _uploadTask;
-    String filePath = 'images/' + id + '.png';
-
+    final FirebaseStorage _storage = FirebaseStorage.instance;
+    String filePath = 'images/' + id + '.jpg';
     StorageTaskSnapshot snapshot =
         await _storage.ref().child(filePath).putFile(selected).onComplete;
     String url = await snapshot.ref.getDownloadURL().then((value) => value);
-    // set IMAGE
-
-    // _uploadTask = _storage.ref().child(filePath).putFile(selected);
-    // while (!_uploadTask.isComplete) {
-    //   if (_uploadTask.isComplete) {
-    //     print("Done!");
-    //     break;
-    //   }
-    // }
-    // final ref = FirebaseStorage.instance.ref().child('images/' + id + '.png');
-    // final String url = await ref.getDownloadURL();
-    // print(url);
+    _setUserImage(url);
   }
 
   void _showDialog(String id) {
@@ -46,11 +71,11 @@ class MapScreenState extends State<ProfilePage> with SingleTickerProviderStateMi
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-            content: new Container(
-          height: 150,
-          child: Column(
-              mainAxisSize: MainAxisSize.min,
+          content: new Container(
+            height: 150,
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 FlatButton.icon(
                   label: Text('Camera'),
@@ -72,109 +97,111 @@ class MapScreenState extends State<ProfilePage> with SingleTickerProviderStateMi
                   label: Text('Remove'),
                   icon: Icon(Icons.close),
                   onPressed: () {
+                    // TODO Remove
                     //_pickImage(ImageSource.gallery);
                     //Navigator.of(context).pop();
                   },
                 ),
-              ]),
-        ));
+              ],
+            ),
+          ),
+        );
       },
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final UserService _userService = Provider.of<UserService>(context, listen: false);
-    var id = _userService.user.uid;
-    var name = _userService.user.name;
-    var email = _userService.user.email;
-    // TODO: implement build
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            "Profile Page",
-            style: TextStyle(fontSize: 18.0),
-          ),
-        ),
-        backgroundColor: Colors.white,
-        body: SafeArea(
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Stack(
-                  children: <Widget>[
-                    Padding(
-                        padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                        child: GFAvatar(
-                            radius: 80,
-                            backgroundImage: NetworkImage('https://via.placeholder.com/150'),
-                            shape: GFAvatarShape.standard)),
-                    Positioned(
-                      top: 130,
-                      left: 120.0,
-                      child: IconButton(
-                        color: Colors.white,
-                        icon: Icon(Icons.edit),
-                        onPressed: () => _showDialog(id),
-                      ),
-                    )
-                  ],
-                ),
-                Padding(
-                    padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                    child: Text(
-                      name,
-                      style: TextStyle(
-                        fontFamily: 'SourceSansPro',
-                        fontSize: 25,
-                      ),
-                    )),
-                SizedBox(
-                  height: 20.0,
-                  width: 200,
-                  child: Divider(
-                    color: Colors.teal[100],
-                  ),
-                ),
-                Card(
-                    color: Colors.white,
-                    shape: RoundedRectangleBorder(
-                        side: new BorderSide(color: Colors.blue, width: 2.0),
-                        borderRadius: BorderRadius.circular(20.0)),
-                    margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 40.0),
-                    child: ListTile(
-                      leading: Icon(
-                        Icons.school,
-                        color: Colors.teal[900],
-                      ),
-                      title: Text(
-                        '6A CSE',
-                        style: TextStyle(fontSize: 20.0),
-                      ),
-                    )),
-                Card(
-                  color: Colors.white,
-                  shape: RoundedRectangleBorder(
-                      side: new BorderSide(color: Colors.blue, width: 2.0),
-                      borderRadius: BorderRadius.circular(20.0)),
-                  margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 40.0),
-                  child: ListTile(
-                    leading: Icon(
-                      Icons.email,
-                      color: Colors.teal[900],
-                    ),
-                    title: Text(
-                      email,
-                      style: TextStyle(
-                        fontSize: 20.0,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        actions: <Widget>[
+          Container(
+            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+            child: RaisedButton(
+              elevation: 0.0,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+              color: Colors.white,
+              onPressed: () => _signOut(),
+              child: Text(
+                'Logout',
+                style:
+                    TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
+              ),
             ),
+          )
+        ],
+        backgroundColor: Colors.white,
+      ),
+      backgroundColor: Colors.white,
+      bottomNavigationBar: const Navbar(index: 2),
+      body: SafeArea(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Stack(
+                children: <Widget>[
+                  // TODO Add Border
+                  // TODO On Click Show Menu
+                  // TODO Default User Icon
+                  // TODO After changes, check if stack is necessary
+                  user.image != null
+                      ? Padding(
+                          padding: EdgeInsets.only(top: 8),
+                          child: GFAvatar(
+                            radius: 80,
+                            backgroundImage: NetworkImage(user.image),
+                            shape: GFAvatarShape.standard,
+                          ),
+                        )
+                      : Container(),
+//                    Positioned(
+//                      top: 130,
+//                      left: 120.0,
+//                      child: IconButton(
+//                        color: Colors.white,
+//                        icon: Icon(Icons.edit),
+//                        onPressed: () => _showDialog(_userService.user.uid),
+//                      ),
+//                    )
+                ],
+              ),
+              Padding(
+                padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                child: Text(user.name, style: TextStyle(fontSize: 24)),
+              ),
+              SizedBox(
+                height: 20.0,
+                width: 200,
+                child: Divider(
+                  color: Colors.lightBlue[200],
+                  thickness: 2,
+                ),
+              ),
+              Card(
+                color: Colors.white,
+                shape: RoundedRectangleBorder(
+                    side: BorderSide(color: Colors.lightBlue[300]),
+                    borderRadius: BorderRadius.circular(24)),
+                margin: EdgeInsets.symmetric(vertical: 8, horizontal: 40),
+                child: ListTile(
+                  leading: Icon(Icons.school, color: Colors.lightBlue[900]),
+                  title: Text(_title, style: TextStyle(fontSize: 20)),
+                ),
+              ),
+              Card(
+                color: Colors.white,
+                shape: RoundedRectangleBorder(
+                    side: BorderSide(color: Colors.lightBlue[300]),
+                    borderRadius: BorderRadius.circular(24)),
+                margin: EdgeInsets.symmetric(vertical: 8, horizontal: 40),
+                child: ListTile(
+                  leading: Icon(Icons.email, color: Colors.lightBlue[900]),
+                  title: Text(user.email, style: TextStyle(fontSize: 20)),
+                ),
+              ),
+            ],
           ),
         ),
       ),

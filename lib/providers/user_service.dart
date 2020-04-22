@@ -6,6 +6,7 @@ import 'package:college_main/models/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+
 class UserService with ChangeNotifier {
   final Firestore _db = Firestore.instance;
   final FirebaseUser _user;
@@ -32,10 +33,11 @@ class UserService with ChangeNotifier {
     notifyListeners();
   }
 
-  void setImage(String url) {
+   void setImage(String url) {
     String collection = _claims.containsKey('admin') ? 'admins' : 'users';
     user.image = url;
     _db.collection(collection).document(user.uid).updateData({'image': url});
+    notifyListeners();
   }
 
   User _getUserFromDocument(Map<String, dynamic> data) {
@@ -48,4 +50,5 @@ class UserService with ChangeNotifier {
     }
     return null;
   }
+ 
 }

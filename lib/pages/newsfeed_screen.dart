@@ -11,6 +11,7 @@ import 'package:college_main/providers/user_service.dart';
 import 'package:college_main/widgets/navbar.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:share/share.dart';
 
 class NewsfeedScreen extends StatefulWidget {
   @override
@@ -280,9 +281,14 @@ class _NewsfeedScreenState extends State<NewsfeedScreen> {
                             ),
                           ),
                           const SizedBox(height: 8),
-                          const Align(
+                          Align(
                             alignment: Alignment.centerRight,
-                            child: const Icon(Icons.share, color: Colors.grey),
+                            child: IconButton(
+                              color: Colors.grey,
+                              icon: Icon(Icons.share),
+                              onPressed: () => Share.share(
+                                  _posts[index].content + '\n - ' + _posts[index].author),
+                            ),
                           ),
                         ],
                       ),

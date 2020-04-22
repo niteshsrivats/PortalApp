@@ -28,7 +28,7 @@ dependencies:
   firebase_storage: ^3.0.4
   getflutter: ^1.0.11
   image_picker: 0.6.0+17
-
+  share : ^0.6.4
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

@@ -1,6 +1,7 @@
 import 'package:college_main/pages/login_screen.dart';
 import 'package:college_main/pages/new_post_screen.dart';
 import 'package:college_main/pages/newsfeed_screen.dart';
+import 'package:college_main/pages/profile_screen.dart';
 import 'package:college_main/providers/defaults_service.dart';
 import 'package:college_main/providers/post_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -40,7 +41,7 @@ class App extends StatelessWidget {
                     routes: {
                       '/': (context) => NewsfeedScreen(),
                       '/post': (context) => NewPostScreen(),
-                      '/profile': (context) => NewPostScreen(),
+                      '/profile': (context) => ProfileScreen(),
                     },
                   );
                 }
@@ -93,6 +94,7 @@ class MaterialAppWithRoutes extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'College Portal',
       theme: ThemeData(
         primarySwatch: Colors.lightBlue,
