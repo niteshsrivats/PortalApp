@@ -5,7 +5,6 @@ import 'package:college_main/models/teacher.dart';
 import 'package:college_main/models/user.dart';
 import 'package:college_main/pages/filter_screen.dart';
 import 'package:college_main/pages/profile_screen.dart';
-import 'package:college_main/providers/auth_service.dart';
 import 'package:college_main/providers/defaults_service.dart';
 import 'package:college_main/providers/post_service.dart';
 import 'package:college_main/providers/user_service.dart';
@@ -31,14 +30,6 @@ class _NewsfeedScreenState extends State<NewsfeedScreen> {
   Map<String, List<bool>> _selected = Map();
   Map<String, List<String>> _data = Map();
 
-  AuthService _authService;
-
-  @override
-  void initState() {
-    _authService = Provider.of<AuthService>(context, listen: false);
-    super.initState();
-  }
-
   Future<void> getPosts() async {
     List<String> accessSpecifiers = [];
     if (_selected['public'][0]) {
@@ -59,8 +50,7 @@ class _NewsfeedScreenState extends State<NewsfeedScreen> {
             department = (_user as Student).department;
           }
           String semester = _data['semesters'][i];
-          String departmentSemester =
-              semester[0] + '-' + department + '-' + semester.substring(2, 6);
+          String departmentSemester = semester[0] + '-' + department + '-' + year;
           accessSpecifiers.add(departmentSemester);
         }
       }
@@ -77,6 +67,7 @@ class _NewsfeedScreenState extends State<NewsfeedScreen> {
         if (_selected['sections'][i]) {
           String section =
               _data['sections'][i].substring(0, 2) + '-' + _data['departments'][0] + '-' + year;
+          accessSpecifiers.add(section);
         }
       }
     }
@@ -198,16 +189,6 @@ class _NewsfeedScreenState extends State<NewsfeedScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 2,
-        leading: IconButton(
-          icon: const Icon(Icons.settings),
-          color: Theme.of(context).primaryColor,
-          padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
-          onPressed: () => _authService.signOut(),
-        ),
-        title: Icon(
-          Icons.language,
-          color: Theme.of(context).primaryColor,
-        ),
         centerTitle: true,
         actions: <Widget>[
           IconButton(

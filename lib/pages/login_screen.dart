@@ -28,8 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (form.validate()) {
       this.setState(() => _loading = true);
       form.save();
-      String errorMessage =
-          await authService.signInWithEmail(email: _email, password: _password);
+      String errorMessage = await authService.signInWithEmail(email: _email, password: _password);
       if (errorMessage != null) {
         this.setState(() {
           final snackBar = _getSnackBar(errorMessage);
@@ -60,8 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final AuthService authService =
-        Provider.of<AuthService>(context, listen: false);
+    final AuthService authService = Provider.of<AuthService>(context, listen: false);
     return Scaffold(
       key: _scaffoldKey,
       extendBody: true,
@@ -78,9 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   : ListView(
                       shrinkWrap: true,
                       children: [
-                        Image(
-                            image: NetworkImage(
-                                'https://www.pinclipart.com/picdir/big/499-4996832_previous-wellington-college-logo-clipart.png')),
+                        Image(image: AssetImage('images/logo.png')),
                         Padding(
                           padding: const EdgeInsets.fromLTRB(0, 32, 0, 0),
                           child: TextFormField(
@@ -106,8 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               icon: new Icon(Icons.lock_outline),
                             ),
                             validator: _validatePassword,
-                            onSaved: (value) =>
-                                setState(() => _password = value),
+                            onSaved: (value) => setState(() => _password = value),
                           ),
                         ),
                         Padding(
@@ -116,12 +111,11 @@ class _LoginScreenState extends State<LoginScreen> {
                             height: 40.0,
                             child: RaisedButton(
                               elevation: 5.0,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(32)),
+                              shape:
+                                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
                               color: Theme.of(context).accentColor,
                               child: Text('Login',
-                                  style: TextStyle(
-                                      fontSize: 20.0, color: Colors.white)),
+                                  style: TextStyle(fontSize: 20.0, color: Colors.white)),
                               onPressed: () => _submit(authService),
                             ),
                           ),

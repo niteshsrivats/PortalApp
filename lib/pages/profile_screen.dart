@@ -124,6 +124,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     String image = post == null ? _user.image : post.image;
+    print(post);
     return Scaffold(
       appBar: AppBar(
         elevation: 0,

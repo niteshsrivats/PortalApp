@@ -35,45 +35,46 @@ class _NewPostScreenState extends State<NewPostScreen> {
   }
 
   void _initialize() {
-    if (_selected.length == 0 || _data.length == 0) User user = _userService.user;
-    User user = _userService.user;
-    String role = user.type;
+    if (_selected.length == 0 || _data.length == 0) {
+      User user = _userService.user;
+      String role = user.type;
 
-    if (role == 'admin') {
-      _data['semesters'] = _defaultsService.semesters;
-      _data['public'] = ['Public'];
-      _selected['public'] = [false];
-    } else if (role == 'teacher') {
-      String year = DateTime.now().year.toString();
-      _data['semesters'] = (user as Teacher).semesters;
-      _data['semesters'].retainWhere((semester) => semester.endsWith(year));
-      _data['semesters'] = _data['semesters'].map((semester) => semester[0]).toList();
-    }
-
-    for (var i = 0; i < _data['semesters'].length; i++) {
-      if (int.tryParse(_data['semesters'][i]) % 2 == 1) {
-        _data['semesters'].retainWhere((semester) => int.tryParse(semester) % 2 == 1);
-        break;
+      if (role == 'admin') {
+        _data['semesters'] = _defaultsService.semesters;
+        _data['public'] = ['Public'];
+        _selected['public'] = [false];
+      } else if (role == 'teacher') {
+        String year = DateTime.now().year.toString();
+        _data['semesters'] = (user as Teacher).semesters;
+        _data['semesters'].retainWhere((semester) => semester.endsWith(year));
+        _data['semesters'] = _data['semesters'].map((semester) => semester[0]).toList();
       }
-    }
-    _selected['semesters'] = List.generate(_data['semesters'].length, (index) => false);
 
-    if (role == 'teacher') {
-      List<String> sections = (user as Teacher).sections;
-      sections.retainWhere((section) =>
-          section.endsWith(DateTime.now().year.toString()) &&
-          _data['semesters'].contains(section[0]));
+      for (var i = 0; i < _data['semesters'].length; i++) {
+        if (int.tryParse(_data['semesters'][i]) % 2 == 1) {
+          _data['semesters'].retainWhere((semester) => int.tryParse(semester) % 2 == 1);
+          break;
+        }
+      }
+      _selected['semesters'] = List.generate(_data['semesters'].length, (index) => false);
 
-      _data['sections'] = sections.map((section) => section.substring(0, 2)).toList();
-      _selected['sections'] = List.generate(sections.length, (index) => false);
-    }
+      if (role == 'teacher') {
+        List<String> sections = (user as Teacher).sections;
+        sections.retainWhere((section) =>
+            section.endsWith(DateTime.now().year.toString()) &&
+            _data['semesters'].contains(section[0]));
 
-    if (role == 'teacher') {
-      _data['departments'] = [(user as Teacher).department];
-      _selected['departments'] = [true];
-    } else {
-      _data['departments'] = _defaultsService.departments;
-      _selected['departments'] = List.generate(_data['departments'].length, (index) => false);
+        _data['sections'] = sections.map((section) => section.substring(0, 2)).toList();
+        _selected['sections'] = List.generate(sections.length, (index) => false);
+      }
+
+      if (role == 'teacher') {
+        _data['departments'] = [(user as Teacher).department];
+        _selected['departments'] = [true];
+      } else {
+        _data['departments'] = _defaultsService.departments;
+        _selected['departments'] = List.generate(_data['departments'].length, (index) => false);
+      }
     }
   }
 
@@ -151,13 +152,13 @@ class _NewPostScreenState extends State<NewPostScreen> {
         for (int j = 0; j < _data['semesters'].length; j++) {
           if (!_selected['public'][0]) {
             if (isSemestersSelected && isDepartmentsSelected) {
-              if (!_selected['semesters'][j] || !_selected['departments'][i]) {
+              if (_selected['semesters'][j] && _selected['departments'][i]) {
                 accessSpecifiers.add(_data['semesters'][j] + '-' + year);
                 accessSpecifiers
                     .add(_data['semesters'][j] + '-' + _data['departments'][i] + '-' + year);
               }
             } else if (isSemestersSelected) {
-              if (!_selected['semesters'][j]) {
+              if (_selected['semesters'][j]) {
                 accessSpecifiers.add(_data['semesters'][j] + '-' + year);
                 accessSpecifiers
                     .add(_data['semesters'][j] + '-' + _data['departments'][i] + '-' + year);
@@ -174,17 +175,16 @@ class _NewPostScreenState extends State<NewPostScreen> {
       }
     }
 
-    Map<String, dynamic> data = Post(
-            author: user.name,
-            authorId: user.uid,
-            authorEmail: user.email,
-            image: user.image,
-            title: title,
-            content: _content,
-            accessSpecifiers: accessSpecifiers.toList())
-        .toMap();
+    Post post = Post(
+        author: user.name,
+        authorId: user.uid,
+        authorEmail: user.email,
+        image: user.image,
+        title: title,
+        content: _content,
+        accessSpecifiers: accessSpecifiers.toList());
 
-    _postService.post(data: data);
+    _postService.post(data: post.toMap());
     Navigator.pushReplacementNamed(context, '/');
   }
 

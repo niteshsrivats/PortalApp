@@ -21,7 +21,6 @@ class UserService with ChangeNotifier {
       print(error);
       return null;
     });
-    print(_claims);
 
     String collection = _claims.containsKey('admin') ? 'admins' : 'users';
     user = await _db
@@ -39,7 +38,6 @@ class UserService with ChangeNotifier {
     _db.collection(collection).document(user.uid).updateData({'image': url});
     _db.collection('posts').where('authorId', isEqualTo: user.uid).getDocuments().then((snap) {
       snap.documents.forEach((document) {
-        print(document.data['id']);
         _db.collection('posts').document(document.data['id'].toString()).updateData({'image': url});
       });
     });

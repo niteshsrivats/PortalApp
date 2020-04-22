@@ -61,6 +61,10 @@ class _FilterState extends State<Filter> {
   }
 
   void _applySelections() {
+    for (String key in selected.keys) {
+      selected[key] = List.generate(selected[key].length, (int index) => false);
+    }
+
     String year = _data['years'][_selected['years'].indexOf(true)];
     for (String key in _selected.keys) {
       for (int index = 0; index < _selected[key].length; index++) {
@@ -107,6 +111,7 @@ class _FilterState extends State<Filter> {
       _data['sections'] = _data['sections'].map((section) => section.substring(0, 2)).toList();
       _selected['sections'] = List.generate(_data['sections'].length,
           (int index) => isOddSemester ? int.tryParse(_data['sections'][index][0]) % 2 == 1 : true);
+      print(_selected);
     }
   }
 
@@ -163,7 +168,9 @@ class _FilterState extends State<Filter> {
   @override
   void setState(VoidCallback fn) {
     super.setState(fn);
-    _applySelections();
+    if (type == 'feed') {
+      _applySelections();
+    }
   }
 
   void handleDepartment(int index) {

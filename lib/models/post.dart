@@ -29,7 +29,7 @@ class Post {
       id: data['id'],
       author: data['author'],
       authorId: data['authorId'],
-      authorEmail: data['email'],
+      authorEmail: data['authorEmail'],
       image: data['image'],
       title: data['title'],
       content: data['content'],
@@ -52,5 +52,10 @@ class Post {
       post.putIfAbsent('id', () => this.id);
     }
     return post;
+  }
+
+  @override
+  String toString() {
+    return 'Post{id: $id, author: $author, authorId: $authorId, authorEmail: $authorEmail, image: $image, title: $title, content: $content, accessSpecifiers: $accessSpecifiers, timestamp: $timestamp}';
   }
 }

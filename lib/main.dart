@@ -77,7 +77,7 @@ class Home extends StatelessWidget {
         lazy: false,
       ),
       ChangeNotifierProvider<PostService>(
-        create: (BuildContext context) => PostService(user),
+        create: (BuildContext context) => PostService(),
         lazy: false,
       ),
     ], child: MaterialAppWithRoutes(routes: routes));
