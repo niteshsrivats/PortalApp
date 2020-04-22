@@ -27,6 +27,21 @@ class _FilterState extends State<Filter> {
   Map<String, List<bool>> _selected;
   final String role, type;
 
+  _FilterState(this.data, this.selected, this.role, this.type);
+
+  @override
+  void initState() {
+    super.initState();
+    if (type == 'post') {
+      _data = data;
+      _selected = selected;
+    } else if (type == 'feed') {
+      _data = _decodeData(data);
+      _selected = _decodeSelected(selected);
+      applyYear(data['years'][selected['years'].indexOf(true)]);
+    }
+  }
+
   Map<String, List<String>> _decodeData(data) {
     Map<String, dynamic> jsondata = json.decode(json.encode(data));
     Map<String, List<String>> finalJson = Map();
@@ -92,17 +107,6 @@ class _FilterState extends State<Filter> {
       _data['sections'] = _data['sections'].map((section) => section.substring(0, 2)).toList();
       _selected['sections'] = List.generate(_data['sections'].length,
           (int index) => isOddSemester ? int.tryParse(_data['sections'][index][0]) % 2 == 1 : true);
-    }
-  }
-
-  _FilterState(this.data, this.selected, this.role, this.type) {
-    if (type == 'post') {
-      _data = data;
-      _selected = selected;
-    } else if (type == 'feed') {
-      _data = _decodeData(data);
-      _selected = _decodeSelected(selected);
-      applyYear(data['years'][selected['years'].indexOf(true)]);
     }
   }
 

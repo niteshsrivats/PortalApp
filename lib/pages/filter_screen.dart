@@ -43,10 +43,6 @@ class _FilterScreenState extends State<FilterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBody: true,
-//      appBar: AppBar(
-//        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-//      ),
       body: Container(
         width: double.infinity,
         padding: const EdgeInsets.all(0),
@@ -54,7 +50,13 @@ class _FilterScreenState extends State<FilterScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(height: 120),
-            Filter(selected: widget.selected, data: widget.data, role: widget.role, type: 'feed'),
+            Filter(
+              key: UniqueKey(),
+              selected: selected,
+              data: data,
+              role: widget.role,
+              type: 'feed',
+            ),
             Expanded(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.end,

@@ -30,7 +30,7 @@ class Student extends User {
       email: data['email'],
       phoneNumber: data['number'],
       id: data['id'],
-      years: data['years'].cash<String>(),
+      years: data['years'].cast<String>(),
       department: data['department'],
       semesters: data['semesters'].cast<String>(),
       sections: data['sections'].cast<String>(),
@@ -39,6 +39,6 @@ class Student extends User {
 
   @override
   String toString() {
-    return 'Student{id: $id, year: $years, department: $department, semesters: $semesters, sections: $sections, type: $type}';
+    return 'Student{id: $id, years: $years, department: $department, semesters: $semesters, sections: $sections}';
   }
 }

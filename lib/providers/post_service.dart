@@ -29,6 +29,7 @@ class PostService with ChangeNotifier {
     List<DocumentSnapshot> documents = await _db
         .collection('posts')
         .where('accessSpecifiers', arrayContainsAny: accessSpecifiers)
+        .orderBy('createdAt', descending: true)
         .getDocuments()
         .then((docs) => docs.documents);
 

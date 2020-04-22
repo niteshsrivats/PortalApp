@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 class Post {
   final String id;
   final String author;
+  final String authorId;
+  final String authorEmail;
   final String image;
   final String title;
   final String content;
@@ -13,6 +15,8 @@ class Post {
   Post({
     this.id,
     @required this.author,
+    @required this.authorId,
+    @required this.authorEmail,
     @required this.image,
     @required this.title,
     @required this.content,
@@ -24,6 +28,8 @@ class Post {
     return new Post(
       id: data['id'],
       author: data['author'],
+      authorId: data['authorId'],
+      authorEmail: data['email'],
       image: data['image'],
       title: data['title'],
       content: data['content'],
@@ -35,6 +41,8 @@ class Post {
   Map<String, dynamic> toMap() {
     Map<String, dynamic> post = {
       'author': this.author,
+      'authorId': this.authorId,
+      'authorEmail': this.authorEmail,
       'image': this.image,
       'title': this.title,
       'content': this.content,

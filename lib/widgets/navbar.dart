@@ -2,10 +2,14 @@ import 'package:flutter/material.dart';
 
 class Navbar extends StatelessWidget {
   final int index;
+  final bool post;
 
-  const Navbar({Key key, @required this.index}) : super(key: key);
+  const Navbar({Key key, @required this.index, @required this.post}) : super(key: key);
 
   void _onTap(BuildContext context, int index) {
+    if (!post) {
+      index += 1;
+    }
     if (index != this.index) {
       switch (index) {
         case 0:
@@ -31,19 +35,24 @@ class Navbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List<BottomNavigationBarItem> items = [];
+    if (post) {
+      items = [BottomNavigationBarItem(icon: Icon(Icons.add_comment), title: Text('New Post'))];
+    }
+    items.addAll([
+      BottomNavigationBarItem(icon: Icon(Icons.rss_feed), title: Text('Feed')),
+      BottomNavigationBarItem(icon: Icon(Icons.person), title: Text('Profile'))
+    ]);
+
     return BottomNavigationBar(
       backgroundColor: Theme.of(context).primaryColor,
       unselectedItemColor: Color(0xA0000000),
       selectedItemColor: Colors.white,
-      onTap: (int index) => _onTap(context, index), // new
-      currentIndex: index,
+      onTap: (int index) => _onTap(context, index),
       // new
-      items: [
-//        BottomNavigationBarItem(icon: Icon(Icons.settings), title: Text('Settings')),
-        BottomNavigationBarItem(icon: Icon(Icons.add_comment), title: Text('New Post')),
-        BottomNavigationBarItem(icon: Icon(Icons.rss_feed), title: Text('Feed')),
-        BottomNavigationBarItem(icon: Icon(Icons.person), title: Text('Profile'))
-      ],
+      currentIndex: post ? index : index - 1,
+      // new
+      items: items,
     );
   }
 }

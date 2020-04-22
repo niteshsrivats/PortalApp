@@ -176,6 +176,8 @@ class _NewPostScreenState extends State<NewPostScreen> {
 
     Map<String, dynamic> data = Post(
             author: user.name,
+            authorId: user.uid,
+            authorEmail: user.email,
             image: user.image,
             title: title,
             content: _content,
@@ -191,7 +193,7 @@ class _NewPostScreenState extends State<NewPostScreen> {
     _initialize();
 
     return Scaffold(
-      bottomNavigationBar: const Navbar(index: 0),
+      bottomNavigationBar: const Navbar(index: 0, post: true),
       extendBody: true,
       body: Container(
         height: double.infinity,

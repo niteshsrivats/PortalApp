@@ -29,8 +29,6 @@ class App extends StatelessWidget {
           return StreamBuilder<FirebaseUser>(
             stream: _authService.onAuthStateChanged,
             builder: (BuildContext context, AsyncSnapshot<FirebaseUser> snapshot) {
-              print(snapshot);
-
               if (snapshot.connectionState == ConnectionState.active) {
                 if (snapshot.data == null) {
                   return MaterialAppWithRoutes(routes: {'/': (context) => LoginScreen()});
