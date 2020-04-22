@@ -29,7 +29,6 @@ class UserService with ChangeNotifier {
         .get()
         .then((snapshot) => _getUserFromDocument(snapshot.data))
         .catchError((error) => print(error));
-    print(user);
     notifyListeners();
   }
 

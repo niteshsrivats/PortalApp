@@ -31,7 +31,8 @@ class DefaultsService with ChangeNotifier {
 
       departments = data['codes'].cast<String>();
       semesters = data['semesters'].cast<String>();
-      semesters = data['years'].cast<String>();
+      years = data['years'].cast<String>();
+      notifyListeners();
     }
   }
 }

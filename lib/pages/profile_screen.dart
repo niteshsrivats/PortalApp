@@ -1,10 +1,11 @@
 import 'dart:io';
-import 'package:getflutter/getflutter.dart';
-import 'package:flutter/material.dart';
+
+import 'package:college_main/providers/user_service.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:getflutter/getflutter.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:college_main/providers/user_service.dart';
 import 'package:provider/provider.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -12,23 +13,27 @@ class ProfilePage extends StatefulWidget {
   MapScreenState createState() => MapScreenState();
 }
 
-class MapScreenState extends State<ProfilePage>
-    with SingleTickerProviderStateMixin {
+class MapScreenState extends State<ProfilePage> with SingleTickerProviderStateMixin {
   final FocusNode myFocusNode = FocusNode();
 
-  final FirebaseStorage _storage = FirebaseStorage(
-      storageBucket: 'gs://college-information-portal.appspot.com/');
+  final FirebaseStorage _storage =
+      FirebaseStorage(storageBucket: 'gs://college-information-portal.appspot.com/');
 
   Future<void> _pickImage(ImageSource source, String id) async {
     File selected = await ImagePicker.pickImage(source: source);
     // StorageUploadTask _uploadTask;
     String filePath = 'images/' + id + '.png';
-    _storage.ref().child(filePath).putFile(selected);
+
+    StorageTaskSnapshot snapshot =
+        await _storage.ref().child(filePath).putFile(selected).onComplete;
+    String url = await snapshot.ref.getDownloadURL().then((value) => value);
+    // set IMAGE
+
     // _uploadTask = _storage.ref().child(filePath).putFile(selected);
     // while (!_uploadTask.isComplete) {
     //   if (_uploadTask.isComplete) {
     //     print("Done!");
-    //     break;  
+    //     break;
     //   }
     // }
     // final ref = FirebaseStorage.instance.ref().child('images/' + id + '.png');
@@ -79,8 +84,7 @@ class MapScreenState extends State<ProfilePage>
 
   @override
   Widget build(BuildContext context) {
-    final UserService _userService =
-        Provider.of<UserService>(context, listen: false);
+    final UserService _userService = Provider.of<UserService>(context, listen: false);
     var id = _userService.user.uid;
     var name = _userService.user.name;
     var email = _userService.user.email;
@@ -105,8 +109,7 @@ class MapScreenState extends State<ProfilePage>
                         padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
                         child: GFAvatar(
                             radius: 80,
-                            backgroundImage:
-                                NetworkImage('https://via.placeholder.com/150'),
+                            backgroundImage: NetworkImage('https://via.placeholder.com/150'),
                             shape: GFAvatarShape.standard)),
                     Positioned(
                       top: 130,
@@ -140,8 +143,7 @@ class MapScreenState extends State<ProfilePage>
                     shape: RoundedRectangleBorder(
                         side: new BorderSide(color: Colors.blue, width: 2.0),
                         borderRadius: BorderRadius.circular(20.0)),
-                    margin:
-                        EdgeInsets.symmetric(vertical: 10.0, horizontal: 40.0),
+                    margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 40.0),
                     child: ListTile(
                       leading: Icon(
                         Icons.school,
@@ -157,8 +159,7 @@ class MapScreenState extends State<ProfilePage>
                   shape: RoundedRectangleBorder(
                       side: new BorderSide(color: Colors.blue, width: 2.0),
                       borderRadius: BorderRadius.circular(20.0)),
-                  margin:
-                      EdgeInsets.symmetric(vertical: 10.0, horizontal: 40.0),
+                  margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 40.0),
                   child: ListTile(
                     leading: Icon(
                       Icons.email,

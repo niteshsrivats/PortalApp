@@ -5,73 +5,55 @@ class FilterScreen extends StatefulWidget {
   final Map<String, List<bool>> selected;
   final Map<String, List<String>> data;
   final String role;
+  final Function reset, getPosts;
 
   const FilterScreen({
     Key key,
     @required this.selected,
     @required this.data,
     @required this.role,
+    @required this.reset,
+    @required this.getPosts,
   }) : super(key: key);
 
   @override
-  _FilterScreenState createState() => _FilterScreenState(this.selected, this.data, this.role);
+  _FilterScreenState createState() =>
+      _FilterScreenState(this.selected, this.data, this.role, this.reset, this.getPosts);
 }
 
 class _FilterScreenState extends State<FilterScreen> {
   final Map<String, List<bool>> selected;
   final Map<String, List<String>> data;
   final String role;
+  final Function reset, getPosts;
 
-  _FilterScreenState(this.selected, this.data, this.role);
+  _FilterScreenState(this.selected, this.data, this.role, this.reset, this.getPosts);
 
   handleReset() {
     this.setState(() {
-      String year = data['years'][0];
-
-      selected['public'][0] = true;
-      selected['years'] = List.generate(data['years'].length, (int index) => false);
-
-      bool isOddSemester = false;
-      for (int i = 0; i < data['semesters'].length; i++) {
-        if (data['semesters'][i].endsWith(year) && int.tryParse(data['semesters'][i][0]) % 2 == 1) {
-          isOddSemester = true;
-          break;
-        }
-      }
-      selected['semesters'] = List.generate(
-          data['semesters'].length,
-          (int index) => data['semesters'][index].endsWith(year) && isOddSemester
-              ? int.tryParse(data['semesters'][index][0]) % 2 == 1
-              : true);
-      if (role != 'admin') {
-        selected['departments'][0] = true;
-        selected['sections'] = List.generate(
-            data['sections'].length,
-            (int index) => data['sections'][index].endsWith(year) && isOddSemester
-                ? int.tryParse(data['sections'][index][0]) % 2 == 1
-                : true);
-      } else {
-        selected['departments'] = List.generate(data['departments'].length, (int index) => false);
-      }
+      reset();
     });
   }
 
-  handleApply() {}
+  handleApply() {
+    getPosts();
+    Navigator.of(context).pop();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      ),
+//      appBar: AppBar(
+//        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+//      ),
       body: Container(
         width: double.infinity,
         padding: const EdgeInsets.all(0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(height: 60),
+            SizedBox(height: 120),
             Filter(selected: widget.selected, data: widget.data, role: widget.role, type: 'feed'),
             Expanded(
               child: Row(

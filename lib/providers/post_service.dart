@@ -25,10 +25,17 @@ class PostService with ChangeNotifier {
     print(result);
   }
 
-  void getPosts() async {
-    List<DocumentSnapshot> documents =
-        await _db.collection('posts').getDocuments().then((docs) => docs.documents);
+  void getPosts(List<String> accessSpecifiers) async {
+    List<DocumentSnapshot> documents = await _db
+        .collection('posts')
+        .where('accessSpecifiers', arrayContainsAny: accessSpecifiers)
+        .getDocuments()
+        .then((docs) => docs.documents);
 
+    int previousLength = posts.length;
     posts = documents.map((doc) => Post.fromMap(doc.data)).toList();
+    if (previousLength != 0 || posts.length != 0) {
+      notifyListeners();
+    }
   }
 }
