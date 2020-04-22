@@ -46,6 +46,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _setTitle();
   }
 
+  void _removeImage(String id) async {
+    final FirebaseStorage _storage = FirebaseStorage.instance;
+    String filePath = 'images/' + id + '.jpg';
+    await _storage.ref().child(filePath).delete();
+    _setUserImage(null);
+  }
+
   void _setTitle() {
     if (user.type == 'admin') {
       _title = (user as Admin).title;
@@ -97,9 +104,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   label: Text('Remove'),
                   icon: Icon(Icons.close),
                   onPressed: () {
-                    // TODO Remove
-                    //_pickImage(ImageSource.gallery);
-                    //Navigator.of(context).pop();
+                    _removeImage(id);
+                    Navigator.of(context).pop();
                   },
                 ),
               ],
@@ -120,13 +126,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
             padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
             child: RaisedButton(
               elevation: 0.0,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0)),
               color: Colors.white,
               onPressed: () => _signOut(),
               child: Text(
                 'Logout',
-                style:
-                    TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    color: Theme.of(context).primaryColor,
+                    fontWeight: FontWeight.bold),
               ),
             ),
           )
@@ -140,33 +148,48 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              Stack(
-                children: <Widget>[
-                  // TODO Add Border
-                  // TODO On Click Show Menu
-                  // TODO Default User Icon
-                  // TODO After changes, check if stack is necessary
-                  user.image != null
-                      ? Padding(
-                          padding: EdgeInsets.only(top: 8),
-                          child: GFAvatar(
-                            radius: 80,
-                            backgroundImage: NetworkImage(user.image),
-                            shape: GFAvatarShape.standard,
-                          ),
+              user.image != null
+                  ? Padding(
+                      padding: EdgeInsets.only(top: 8),
+                      child: GestureDetector(
+                          onTap: () => _showDialog(user.uid),
+                          child: Container(
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: Colors.black87, width: 2.5),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(15.0))),
+                            child: GFAvatar(
+                              backgroundColor: Colors.black,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(13.0)),
+                              radius: 80,
+                              backgroundImage: NetworkImage(user.image),
+                              shape: GFAvatarShape.square,
+                            ),
+                          )))
+                  : Padding(
+                      padding: EdgeInsets.only(top: 8),
+                      child: GestureDetector(
+                          onTap: () => _showDialog(user.uid),
+                          child: Container(
+                            decoration: BoxDecoration(
+                                border: Border.all(
+                                    color: Colors.black87, width: 2.5),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(15.0))),
+                            child: GFAvatar(
+                              backgroundColor: Colors.white,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(13.0)),
+                              radius: 80,
+                              backgroundImage: NetworkImage(
+                                  'https://www.materialui.co/materialIcons/action/account_circle_grey_192x192.png'),
+                              shape: GFAvatarShape.square,
+                            ),
+                          )
                         )
-                      : Container(),
-//                    Positioned(
-//                      top: 130,
-//                      left: 120.0,
-//                      child: IconButton(
-//                        color: Colors.white,
-//                        icon: Icon(Icons.edit),
-//                        onPressed: () => _showDialog(_userService.user.uid),
-//                      ),
-//                    )
-                ],
-              ),
+                      ),
               Padding(
                 padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
                 child: Text(user.name, style: TextStyle(fontSize: 24)),
