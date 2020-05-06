@@ -158,15 +158,12 @@ class _NewPostScreenState extends State<NewPostScreen> {
                     .add(_data['semesters'][j] + '-' + _data['departments'][i] + '-' + year);
               }
             } else if (isSemestersSelected) {
-              if (_selected['semesters'][j]) {
-                accessSpecifiers.add(_data['semesters'][j] + '-' + year);
-                accessSpecifiers
-                    .add(_data['semesters'][j] + '-' + _data['departments'][i] + '-' + year);
-              }
+              accessSpecifiers.add(_data['semesters'][j] + '-' + year);
+              accessSpecifiers
+                  .add(_data['semesters'][j] + '-' + _data['departments'][i] + '-' + year);
             } else if (isDepartmentsSelected) {
-              if (_selected['departments'][i]) {
-                accessSpecifiers.add(_data['departments'][i] + '-' + year);
-              }
+              accessSpecifiers.add(_data['semesters'][j] + '-' + year);
+              accessSpecifiers.add(_data['departments'][i]);
             }
           } else {
             accessSpecifiers.add('public');
